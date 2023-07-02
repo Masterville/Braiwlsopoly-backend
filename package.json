@@ -1,5 +1,5 @@
 {
-  "name": "Monopoly",
+  "name": "monopoly",
   "version": "1.0.0",
   "description": "juego de mesa",
   "main": "index.js",
