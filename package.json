@@ -29,8 +29,8 @@
     "sequelize-cli": "^6.6.1"
   },
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "deploy": "node start.js",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "sequelize db:seed:all",
