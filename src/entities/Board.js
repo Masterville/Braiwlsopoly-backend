@@ -16,11 +16,9 @@ class Board {
 
   moverPlayer(player, players) {
     let valorMov = player.lanzarDado();
-    const msg = "El jugador " + player.nombre + " ha obtenido el valor " + valorMov + " en el dado"
-    console.log(msg)
+    console.log("El jugador " + player.nombre + " ha obtenido el valor: " + valorMov + " en el dado");
     player.moverEnBoard(valorMov, this.squares.length);
     this.squares[player.squareActual].realizarAccion(player, players, this.squares, valorMov)
-    return msg
   }
 
   recargarBoard() {

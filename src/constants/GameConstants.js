@@ -1,8 +1,8 @@
 class GameConstants {
-    static DINERO_INICIAL = 55500; //Sugerencia: 1500
+    static DINERO_INICIAL = 1500; //Sugerencia: 1500
     static SQUARE_INICIAL = 0; //Sugerencia: 0
-    static DADOS_MIN_VALOR = 1; //Sugerencia: 2
-    static DADOS_MAX_VALOR = 1; //Sugerencia: 12
+    static DADOS_MIN_VALOR = 2; //Sugerencia: 2
+    static DADOS_MAX_VALOR = 12; //Sugerencia: 12
     static TURNO_INICIAL = 0;
     static DINERO_POR_VUELTA = 150;
 

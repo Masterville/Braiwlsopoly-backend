@@ -57,28 +57,31 @@ class GameManager {
         let playerEnPartida = false;
         let nickRepetido = false;
         let nombreMuyLargo = false;
+        let cupoDisponible = false;
 
         if (nombrePlayer.length > C.LEN_NICKNAME_MAX) {
             nombreMuyLargo = true;
         }
-        game.players.forEach(player => {
-            if (player.idUser == userID) {
-                //El jugador ya se encuentra en la partida
-                playerEnPartida = true;
+        if (!game.error && game.players) {
+            game.players.forEach(player => {
+                if (player.idUser == userID) {
+                    //El jugador ya se encuentra en la partida
+                    playerEnPartida = true;
+                }
+                if (player.nombre == nombrePlayer) {
+                    //El nickname ya se encuentra en la partida
+                    nickRepetido = true;
+                }
+            });
+            cupoDisponible = game.players.length < C.MAX_PLAYER_PER_GAME;
+            if (game && !game.gameComenzado && !playerEnPartida && cupoDisponible
+                && !nickRepetido && !nombreMuyLargo) {
+                //Se crea un nuevo jugador para ese juego
+                let player = await this.create.newPlayer(idGame, nombrePlayer, userID);
+                game.joinGame(player);
+                await this.saveChanges(idGame);
+                return { game };
             }
-            if (player.nombre == nombrePlayer) {
-                //El nickname ya se encuentra en la partida
-                nickRepetido = true;
-            }
-        });
-        let cupoDisponible = game.players.length < C.MAX_PLAYER_PER_GAME;
-        if (game && !game.gameComenzado && !playerEnPartida && cupoDisponible
-            && !nickRepetido && !nombreMuyLargo) {
-            //Se crea un nuevo jugador para ese juego
-            let player = await this.create.newPlayer(idGame, nombrePlayer, userID);
-            game.joinGame(player);
-            await this.saveChanges(idGame);
-            return { game };
         }
         return !game
             ? { error: "Juego no encontrado", game }
@@ -98,11 +101,13 @@ class GameManager {
     async voteGame(idGame, voteStart, userID) {
         let game = await this.find.findGame(idGame, GameManager);
 
-        game.players.forEach(player => {
-            if (player.idUser == userID) {
-                player.votarComenzarPartida(voteStart);
-            }
-        })
+        if (!game.error) {
+            game.players.forEach(player => {
+                if (player.idUser == userID) {
+                    player.votarComenzarPartida(voteStart);
+                }
+            })
+        }
         //No se guardan cambios porque no es importante en este caso.
         return { game }
     }
@@ -110,7 +115,7 @@ class GameManager {
     async leaveGame(idGame, userID) {
         let game = await this.find.findGame(idGame, GameManager);
         let idPlayer = null;
-        if(!game.error) {
+        if (!game.error) {
             game.players.forEach(player => {
                 if (player.idUser == userID) {
                     idPlayer = player.id;
@@ -139,17 +144,19 @@ class GameManager {
         let todosDeAcuerdo = true;
         let nPlayers = 0;
         let cumpleMinPlayers = false;
-        game.players.forEach(player => {
-            nPlayers++;
-            if (player.idUser == userID) {
-                //El jugador ya se encuentra en la partida
-                //Entonces puede iniciar el juego porque le pertenece
-                playerEnPartida = true;
-            }
-            if (!player.votoComienzo) {
-                todosDeAcuerdo = false;
-            }
-        });
+        if (!game.error) {
+            game.players.forEach(player => {
+                nPlayers++;
+                if (player.idUser == userID) {
+                    //El jugador ya se encuentra en la partida
+                    //Entonces puede iniciar el juego porque le pertenece
+                    playerEnPartida = true;
+                }
+                if (!player.votoComienzo) {
+                    todosDeAcuerdo = false;
+                }
+            });
+        }
         if (nPlayers >= C.MIN_PLAYER_PER_GAME) cumpleMinPlayers = true;
         if (!game.error && !game.gameComenzado && playerEnPartida && todosDeAcuerdo && cumpleMinPlayers) {
             game.inicializarGame();

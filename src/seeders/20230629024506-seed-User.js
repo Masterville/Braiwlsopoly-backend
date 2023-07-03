@@ -14,22 +14,6 @@ module.exports = {
         role: "admin",
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
-      {
-        username: "carlos",
-        mail: "carlos@uc.cl",
-        password: hashPassword,
-        role: "admin",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        username: "Cecilio",
-        mail: "ceci@gmail.com",
-        password: hashPassword,
-        role: "admin",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       }
     ])
   },
